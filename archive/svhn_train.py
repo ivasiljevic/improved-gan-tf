@@ -27,7 +27,7 @@ z_dim = 100
 gf_dim = 64
 df_dim = 64
 
-learning_rate = 0.002
+learning_rate = 0.0002
 beta1 = 0.5
 
 images = tf.placeholder(tf.float32, [batch_size] + image_shape, name='real_images')
@@ -35,8 +35,8 @@ sample_images= tf.placeholder(tf.float32, [sample_size] + image_shape, name='sam
 z = tf.placeholder(tf.float32, [None, z_dim], name='z')
 
 G = generator(z)
-D, D_logits, predict = discriminator(images)
-D_, D_logits_,predict_ = discriminator(G, reuse=True)
+D, D_logits = discriminator(images)
+D_, D_logits_ = discriminator(G, reuse=True)
 
 d_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(D_logits, tf.ones_like(D)))
 d_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(D_logits_, tf.zeros_like(D_)))
@@ -69,8 +69,7 @@ for k in range(1):
     for i in range(iterations): #epochs
         batch_images = train_X[im_id : im_id+batch_size ,:]
         #batch_images = train_X[i*1000 : (i+1)*1000 ,:]
-        #print(sess.run(D, feed_dict={images: batch_images}).shape)
-        labels = train_Y[im_id : im_id + batch_size ,:]
+        #y_batch = train_Y[i*1000 : (i+1)*1000 ,:]
         batch_z = np.random.uniform(-1, 1, [batch_size, z_dim]).astype(np.float32)
         # Update D network
         sess.run([d_optim], feed_dict={images: batch_images, z: batch_z})

@@ -29,9 +29,9 @@ def discriminator(image, reuse=False):
     h1 = lrelu(d_bn1(conv2d(h0, df_dim*2, name='d_h1_conv')))
     #h2 = lrelu(d_bn2(conv2d(h1, df_dim*4, name='d_h2_conv')))
     h3 = lrelu(d_bn3(conv2d(h1, df_dim*4, name='d_h3_conv')))
-    h4 = linear(tf.reshape(h3, [batch_size, -1]), 10, 'd_h3_lin')
-    Z = tf.reduce_sum(tf.exp(h4),1)
-    return tf.nn.sigmoid(Z/(Z+1)), Z, tf.nn.softmax(h4)
+    h4 = linear(tf.reshape(h3, [batch_size, -1]), 1, 'd_h3_lin')
+
+    return tf.nn.sigmoid(h4), h4
 
 def generator(z):
     z_ = linear(z, gf_dim*8*4*4, 'g_h0_lin')
