@@ -42,10 +42,11 @@ def discriminator(image, reuse=False):
     h4 = lrelu(conv2d(h3, df_dim*2,stride_vert=1,stride_horiz=1, name='d_h4_conv'))
     h5 = lrelu(conv2d(h4, df_dim*2,name='d_h5_conv'))
     h5_2 = tf.nn.dropout(h5,0.5)
-
     h6 = lrelu(conv2d(h5_2, df_dim*2, name='d_h6_conv'))
-    h6_2 = tf.nn.avg_pool(h6,ksize=[1,2,2,1],strides=[1,2,2,1],padding="SAME")
-    h7 = linear(tf.reshape(h6_2, [batch_size, -1]), 10, 'd_h3_lin')
+    #h6_2 = tf.nn.avg_pool(h6,ksize=[1,2,2,1],strides=[1,2,2,1],padding="SAME")
+    h6_2 = lrelu(linear(tf.reshape(h6, [batch_size, -1]), 1024, 'd_h2_lin'))
+    h7 = linear(h6_2,10, 'd_h3_lin')
+    #h7 = linear(tf.reshape(h6_2, [batch_size, -1]), 10, 'd_h3_lin')
     Z = tf.reduce_sum(tf.exp(h7),1)
     return tf.nn.sigmoid(Z/(Z+1)), Z, tf.nn.softmax(h7)
 

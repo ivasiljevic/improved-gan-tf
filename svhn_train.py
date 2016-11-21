@@ -73,10 +73,9 @@ for k in range(epoch):
     im_id = 0
     for i in range(iterations): #epochs
         batch_images = train_X[im_id : im_id+batch_size ,:]
-        #batch_images = train_X[i*1000 : (i+1)*1000 ,:]
-        #print(sess.run(D, feed_dict={images: batch_images}).shape)
         labels = train_Y[im_id : im_id + batch_size ,:]
         batch_z = np.random.uniform(-1, 1, [batch_size, z_dim]).astype(np.float32)
+
         # Update D network
         sess.run([d_optim], feed_dict={images: batch_images, z: batch_z, y_: labels})
         # Update G network
