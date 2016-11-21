@@ -1,4 +1,8 @@
 import tensorflow as tf
+import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 class batch_norm(object):
     """Code modification of http://stackoverflow.com/a/33950177"""
@@ -35,7 +39,7 @@ class batch_norm(object):
         return normed
 
 # Linear
-def linear(input_, output_size, scope=None, stddev=0.02, bias_start=0.0, with_w=False):
+def linear(input_, output_size, scope=None, stddev=0.05, bias_start=0.0, with_w=False):
     shape = input_.get_shape().as_list()
 
     with tf.variable_scope(scope or "Linear"):
@@ -47,7 +51,7 @@ def linear(input_, output_size, scope=None, stddev=0.02, bias_start=0.0, with_w=
         return tf.matmul(input_, matrix) + bias
         
 # Conv2D Layer
-def conv2d(input_, out_channels, filter_h=5, filter_w=5, stride_vert=2, stride_horiz=2, stddev=0.02, name="conv2d"):
+def conv2d(input_, out_channels, filter_h=3, filter_w=3, stride_vert=2, stride_horiz=2, stddev=0.05, name="conv2d"):
     with tf.variable_scope(name):
         # Get the number of input channels
         in_channels = input_.get_shape()[-1]
@@ -89,3 +93,16 @@ def lrelu(x, leak=0.2, name="lrelu"):
         f1 = 0.5 * (1 + leak)
         f2 = 0.5 * (1 - leak)
         return f1 * x + f2 * abs(x)
+
+def save_plot(pred,k):
+     examples = pred[0:30]#sess.run(pred, feed_dict={x: test, phase_train.name:False})#/255.#.astype(int)
+     count = 0
+     rngsize = 3
+     F = np.zeros((32*rngsize,32*rngsize,3))
+     for i in range(rngsize):
+         for j in range(rngsize):
+             F[i*32:(i+1)*32, j*32:(j+1)*32,:] = np.reshape(examples[count], (32,32,3))
+             count = count + 1
+     plt.imshow(F, interpolation='nearest')
+     plt.savefig("GAN_"+str(k)+".png")
+     plt.close()
