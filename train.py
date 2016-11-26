@@ -6,8 +6,8 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import scipy.io as sio
 import random
-from svhn_model import *
-from svhn_data import *
+from network import *
+from data import *
 from scipy.ndimage.filters import gaussian_filter
 
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
@@ -41,7 +41,7 @@ error = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(predict, y_))
 
 d_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(D_logits, tf.ones_like(D)))
 d_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(D_logits_, tf.zeros_like(D_)))
-d_loss = d_loss_real + d_loss_fake #+ error
+d_loss = d_loss_real + d_loss_fake# + error
 
 #g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(D_logits_, tf.ones_like(D_)))
 g_loss = tf.nn.l2_loss(feat - feat_)

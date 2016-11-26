@@ -9,13 +9,6 @@ z_dim = 100
 gf_dim = 64
 df_dim = 64
 
-d_bn1 = batch_norm(name='d_bn1')
-d_bn2 = batch_norm(name='d_bn2')
-d_bn3 = batch_norm(name='d_bn3')
-d_bn4 = batch_norm(name='d_bn4')
-d_bn5 = batch_norm(name='d_bn5')
-d_bn6 = batch_norm(name='d_bn6')
-
 g_bn0 = batch_norm(name='g_bn0')
 g_bn1 = batch_norm(name='g_bn1')
 g_bn2 = batch_norm(name='g_bn2')
@@ -36,14 +29,15 @@ def discriminator(image, reuse=False):
     h5 = lrelu(conv2d(h4, df_dim*2,name='d_h5_conv'))
     h5_2 = tf.nn.dropout(h5,0.5)
     h6 = lrelu(conv2d(h5_2, df_dim*2, name='d_h6_conv'))
-    h6_2 = tf.nn.avg_pool(h6,ksize=[1, 2, 2, 1],strides=[1, 2, 2, 1], padding='VALID') 
+    #h6_2 = tf.nn.avg_pool(h6,ksize=[1, 2, 2, 1],strides=[1, 2, 2, 1], padding='VALID') 
+    h6_2 = tf.reduce_mean(h6, reduction_indices=[3], keep_dims=True)
     #h6_2 = tf.nn.avg_pool(h6,ksize=[1,2,2,1],strides=[1,2,2,1],padding="SAME")
     #h6_3 = lrelu(linear(tf.reshape(h6_2, [batch_size, -1]), 1024, 'd_h2_lin'))
     #h6_4 = tf.nn.dropout(h6_3,0.5)
    # h7 = linear(h6_3,10, 'd_h3_lin')
     h7 = linear(tf.reshape(h6_2, [batch_size, -1]), 10, 'd_h3_lin')
     Z = tf.reduce_sum(tf.exp(h7),1)
-    feat_mat = h5
+    feat_mat = h6_2
     return tf.nn.sigmoid(Z/(Z+1)), Z, tf.nn.softmax(h7), feat_mat
 
 def generator(z):
