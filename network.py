@@ -13,7 +13,12 @@ g_bn0 = batch_norm(name='g_bn0')
 g_bn1 = batch_norm(name='g_bn1')
 g_bn2 = batch_norm(name='g_bn2')
 g_bn3 = batch_norm(name='g_bn3')
+
+d_bn1 = batch_norm(name='d_bn1')
+d_bn2 = batch_norm(name='d_bn2')
+d_bn3 = batch_norm(name='d_bn3')
   
+'''
 def discriminator(image, reuse=False):
     if reuse:
         tf.get_variable_scope().reuse_variables()
@@ -39,6 +44,19 @@ def discriminator(image, reuse=False):
     Z = tf.reduce_sum(tf.exp(h7),1)
     feat_mat = h6_2
     return tf.nn.sigmoid(Z/(Z+1)), Z, tf.nn.softmax(h7), feat_mat
+'''
+
+def discriminator(image, reuse=False):
+    if reuse:
+        tf.get_variable_scope().reuse_variables()
+
+    h0 = lrelu(conv2d(image, df_dim, name='d_h0_conv'))
+    h1 = lrelu(conv2d(h0, df_dim*2, name='d_h1_conv'))
+    h2 = lrelu(conv2d(h1, df_dim*4, name='d_h2_conv'))
+    h3 = linear(tf.reshape(h2, [batch_size, -1]), 10, 'd_h3_lin')
+    Z = tf.reduce_sum(tf.exp(h3),1)
+    feat_mat = h3
+    return tf.nn.sigmoid(Z/(Z+1)), Z, tf.nn.softmax(h3), feat_mat
 
 def generator(z):
     z_ = linear(z, gf_dim*8*4*4, 'g_h0_lin')

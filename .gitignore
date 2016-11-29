@@ -3,3 +3,6 @@
 *.png
 *.pyc
 *.swp
+*.sh
+__pycache__
+archive
